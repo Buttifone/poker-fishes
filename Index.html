@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Poker Fishes</title>
+</head>
+<body style="background:#064e3b;color:white;text-align:center;">
+  <h1>🃏 Poker Fishes</h1>
+  <button onclick="tip()">Dona 50 🐟</button>
+  <button onclick="start()">Inizia Mano</button>
+  <p id="msg"></p>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const name = prompt("Inserisci il tuo nome")
+    const room = new URLSearchParams(location.search).get("room") || "AMICI"
+    const socket = io("INSERISCI_LINK_RENDER")
+
+    socket.emit("join-room", { roomId: room, name })
+
+    function tip() {
+      socket.emit("tip-dealer", { roomId: room, name })
+    }
+
+    function start() {
+      socket.emit("start-hand", room)
+    }
+
+    socket.on("dealer-message", msg => {
+      document.getElementById("msg").innerText = msg
+    })
+
+    socket.on("hand-result", r => {
+      document.getElementById("msg").innerText =
+        "🏆 Vince: " + r.winners.join(", ")
+    })
+  </script>
+</body>
+</html>
